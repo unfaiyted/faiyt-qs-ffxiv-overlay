@@ -3,7 +3,7 @@ set -euo pipefail
 
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cactbot_dir="$project_dir/.deps/cactbot"
-revision="$(tr -d '[:space:]' < "$project_dir/cactbot.version")"
+revision="${1:-$(tr -d '[:space:]' < "$project_dir/cactbot.version")}"
 repository="https://github.com/OverlayPlugin/cactbot.git"
 
 mkdir -p "$project_dir/.deps"

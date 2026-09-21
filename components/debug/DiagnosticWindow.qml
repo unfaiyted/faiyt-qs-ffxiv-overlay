@@ -36,8 +36,17 @@ PanelWindow {
         anchors.fill: parent
         backgroundOpacity: 0.96
         accentColor: Theme.gold
+        Flickable {
+            id: diagnosticScroll
+            anchors.fill: parent
+            anchors.margins: 18
+            contentWidth: width
+            contentHeight: diagnosticContent.implicitHeight
+            clip: true
+            boundsBehavior: Flickable.StopAtBounds
         Column {
-            anchors.fill: parent; anchors.margins: 18; spacing: 13
+            id: diagnosticContent
+            width: diagnosticScroll.width; spacing: 13
             Row {
                 width: parent.width; height: 40
                 Column {
@@ -83,6 +92,39 @@ PanelWindow {
                     color: OverlayState.cactbotState === "error" ? Theme.love : Theme.subtle
                     font.family: Theme.monoFont; font.pixelSize: 10; wrapMode: Text.Wrap
                 }
+            }
+
+            Text { text: "CACTBOT UPSTREAM"; color: Theme.muted; font.family: Theme.uiFont; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 1.4 }
+            Rectangle {
+                width: parent.width
+                height: updateDetails.implicitHeight + 18
+                radius: 7
+                color: Theme.alpha(CactbotUpdateService.updateAvailable ? Theme.gold : Theme.highlightLow, CactbotUpdateService.updateAvailable ? 0.18 : 0.7)
+                border.width: CactbotUpdateService.updateAvailable ? 1 : 0
+                border.color: Theme.alpha(Theme.gold, 0.7)
+                Column {
+                    id: updateDetails
+                    anchors.left: parent.left; anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; anchors.margins: 9
+                    spacing: 3
+                    Text {
+                        text: CactbotUpdateService.status.toUpperCase() + " · pinned " + CactbotUpdateService.currentShort + " · upstream " + CactbotUpdateService.latestShort
+                        color: CactbotUpdateService.updateAvailable ? Theme.gold : CactbotUpdateService.status === "error" ? Theme.love : Theme.foam
+                        font.family: Theme.monoFont; font.pixelSize: 10; font.weight: Font.Bold
+                    }
+                    Text { width: parent.width; text: CactbotUpdateService.detail; color: Theme.subtle; font.family: Theme.monoFont; font.pixelSize: 10; wrapMode: Text.Wrap }
+                    Text { visible: CactbotUpdateService.updateAvailable; width: parent.width; text: "New upstream revisions have not been tested with this adapter and may contain breaking changes."; color: Theme.gold; font.family: Theme.uiFont; font.pixelSize: 10; wrapMode: Text.Wrap }
+                }
+            }
+            Flow {
+                width: parent.width; spacing: 8
+                DebugButton { text: CactbotUpdateService.status === "checking" ? "Checking…" : "Check upstream"; accentColor: Theme.iris; onClicked: CactbotUpdateService.checkNow() }
+                DebugButton {
+                    visible: CactbotUpdateService.updateAvailable
+                    text: CactbotUpdateService.confirmationPending ? "Confirm untested update" : CactbotUpdateService.status === "updating" ? "Building update…" : "Update cactbot"
+                    accentColor: CactbotUpdateService.confirmationPending ? Theme.love : Theme.gold
+                    onClicked: CactbotUpdateService.confirmationPending ? CactbotUpdateService.applyUpdate() : CactbotUpdateService.requestUpdate()
+                }
+                Text { text: "Last check: " + CactbotUpdateService.lastChecked; color: Theme.muted; font.family: Theme.monoFont; font.pixelSize: 9 }
             }
 
             Text { text: "BRIDGE & DATA"; color: Theme.muted; font.family: Theme.uiFont; font.pixelSize: 10; font.weight: Font.Bold; font.letterSpacing: 1.4 }
@@ -155,6 +197,7 @@ PanelWindow {
                 }
             }
             Text { width: parent.width; wrapMode: Text.WordWrap; text: "Persistent history: ~/.local/state/faiyt-qs-ffxiv-overlay/events-YYYY-MM-DD.jsonl"; color: Theme.muted; font.family: Theme.monoFont; font.pixelSize: 10 }
+        }
         }
     }
 }

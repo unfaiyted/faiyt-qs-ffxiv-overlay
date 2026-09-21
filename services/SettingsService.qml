@@ -27,15 +27,16 @@ Singleton {
     property string iinactEndpoint: "ws://127.0.0.1:10501/ws"
     property string chromiumPath: "chromium"
     property int devtoolsPort: 10503
+    property bool cactbotUpdateChecksEnabled: true
 
     function scheduleSave() { if (loaded) saveTimer.restart() }
     function load() { loadProcess.buffer = ""; loadProcess.running = true }
     function save() {
         saveProcess.payload = JSON.stringify({
-            version: 7, soundsEnabled, ttsMode, volume, raidbossVisible,
+            version: 8, soundsEnabled, ttsMode, volume, raidbossVisible,
             timelineVisible, timelineRows, timelineHorizonSeconds,
             dpsVisible, dpsIdleMode, dpsFrameEnabled, dpsHoverOpacityEnabled, hideWhenInactive, surfaceOpacity, monitorMode,
-            healthAlertsEnabled, iinactEndpoint, chromiumPath, devtoolsPort
+            healthAlertsEnabled, iinactEndpoint, chromiumPath, devtoolsPort, cactbotUpdateChecksEnabled
         }, null, 2)
         saveProcess.stdinEnabled = true
         saveProcess.running = true
@@ -60,6 +61,7 @@ Singleton {
     onIinactEndpointChanged: scheduleSave()
     onChromiumPathChanged: scheduleSave()
     onDevtoolsPortChanged: scheduleSave()
+    onCactbotUpdateChecksEnabledChanged: scheduleSave()
 
     Process { id: mkdirProcess; command: ["mkdir", "-p", root.configDir] }
     Process {
@@ -72,7 +74,7 @@ Singleton {
             if (exitCode === 0 && loadProcess.buffer.trim()) {
                 try {
                     const saved = JSON.parse(loadProcess.buffer)
-                    needsMigration = (saved.version || 1) < 7
+                    needsMigration = (saved.version || 1) < 8
                     if (saved.soundsEnabled !== undefined) root.soundsEnabled = saved.soundsEnabled
                     if (saved.ttsMode !== undefined)
                         root.ttsMode = ["off", "alarm", "important", "all"].includes(saved.ttsMode) ? saved.ttsMode : "off"
@@ -99,6 +101,8 @@ Singleton {
                         root.chromiumPath = saved.chromiumPath
                     if (saved.devtoolsPort !== undefined)
                         root.devtoolsPort = Math.max(1024, Math.min(65535, Number(saved.devtoolsPort) || 10503))
+                    if (saved.cactbotUpdateChecksEnabled !== undefined)
+                        root.cactbotUpdateChecksEnabled = saved.cactbotUpdateChecksEnabled
                 } catch (error) { console.warn("SettingsService: invalid settings:", error) }
             }
             root.loaded = true

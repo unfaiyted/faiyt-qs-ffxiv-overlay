@@ -265,6 +265,7 @@ The settings panel includes:
 - Follow-FFXIV or fixed-monitor placement
 - Hide-when-unfocused and surface opacity
 - Health-warning enablement
+- Periodic upstream cactbot update checks
 - IINACT WebSocket endpoint
 - Chromium executable and DevTools port
 - Runtime restart and restoration of connection defaults
@@ -354,6 +355,13 @@ systemctl --user restart faiyt-qs-ffxiv-overlay.service
 Changing `cactbot.version` should be treated as an application update and
 tested before distribution. This project consumes upstream encounter data
 directly rather than maintaining a separate dungeon or raid mapping.
+
+The application checks upstream cactbot `HEAD` at startup and every six hours
+by default. Diagnostics shows the pinned and upstream revisions when an update
+is available. Updating requires a second confirmation because the new revision
+has not yet been tested against this adapter. The updater builds first and only
+rewrites `cactbot.version` after a successful build; failures retain the
+existing pin and runtime. Automatic checks can be disabled in Settings.
 
 ## Updating this project
 

@@ -4,3 +4,4 @@ singleton MonitorService 1.0 MonitorService.qml
 singleton AudioService 1.0 AudioService.qml
 singleton LayoutService 1.0 LayoutService.qml
 singleton SettingsService 1.0 SettingsService.qml
+singleton CactbotUpdateService 1.0 CactbotUpdateService.qml

@@ -124,6 +124,7 @@ PanelWindow {
                 Flow {
                     width: parent.width; spacing: 8
                     DebugButton { text: SettingsService.healthAlertsEnabled ? "Health alerts: ON" : "Health alerts: OFF"; accentColor: SettingsService.healthAlertsEnabled ? Theme.foam : Theme.muted; onClicked: SettingsService.healthAlertsEnabled = !SettingsService.healthAlertsEnabled }
+                    DebugButton { text: SettingsService.cactbotUpdateChecksEnabled ? "Cactbot checks: ON" : "Cactbot checks: OFF"; accentColor: SettingsService.cactbotUpdateChecksEnabled ? Theme.foam : Theme.muted; onClicked: SettingsService.cactbotUpdateChecksEnabled = !SettingsService.cactbotUpdateChecksEnabled }
                     DebugButton { text: "Restart runtime"; accentColor: Theme.pine; onClicked: OverlayState.restartBridge() }
                     DebugButton {
                         text: "Restore defaults"
