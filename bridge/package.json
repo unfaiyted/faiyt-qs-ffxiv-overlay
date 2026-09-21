@@ -1,0 +1,10 @@
+{
+  "name": "@faiyt/qs-ffxiv-overlay-bridge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "check": "bun build --target=bun --outfile=/tmp/faiyt-ffxiv-overlay-bridge-check.js src/index.ts"
+  }
+}
+

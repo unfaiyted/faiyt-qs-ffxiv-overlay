@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+  <meta charset="utf-8">
+  <title>Cactbot Raidboss</title>
+  <script>
+    // Native-output adapter. Cactbot remains the encounter engine, but browser
+    // speech/audio never reaches an output device.
+    window.__faiytCactbotEvents = [];
+    window.__faiytPush = (event) => window.__faiytCactbotEvents.push({
+      timestamp: Date.now(),
+      ...event,
+    });
+
+    const NativeWebSocket = window.WebSocket;
+    window.WebSocket = class extends NativeWebSocket {
+      send(data) {
+        try {
+          const message = JSON.parse(String(data));
+          if (message.call === 'cactbotSay') {
+            window.__faiytPush({ type: 'tts', text: String(message.text || '') });
+            // Resolve through IINACT without asking it to speak. The native
+            // Piper service owns all speech output.
+            return super.send(JSON.stringify({ call: 'getVersion', rseq: message.rseq }));
+          }
+        } catch (_) {}
+        return super.send(data);
+      }
+    };
+
+    window.Audio = class {
+      constructor(url) { this.src = String(url || ''); this.volume = 1; }
+      play() {
+        window.__faiytPush({ type: 'sound', text: this.src, volume: this.volume });
+        return Promise.resolve();
+      }
+      pause() {}
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const severities = ['alarm', 'alert', 'info'];
+      for (const severity of severities) {
+        const holder = document.querySelector(`#popup-text-${severity} .holder`);
+        if (!holder) continue;
+        new MutationObserver((changes) => {
+          for (const change of changes) {
+            for (const node of change.addedNodes) {
+              const text = node.textContent?.trim();
+              if (text) window.__faiytPush({ type: 'alert', severity, text });
+            }
+          }
+        }).observe(holder, { childList: true });
+      }
+    });
+  </script>
+  <script defer src="../.deps/cactbot/dist/ui/common/raidboss_data.bundle.js"></script>
+  <script defer src="../.deps/cactbot/dist/ui/raidboss/raidboss.bundle.js"></script>
+  <link href="../.deps/cactbot/dist/ui/raidboss/raidboss.css" rel="stylesheet">
+</head>
+<body>
+  <div id="container">
+    <div id="timeline-container">
+      <div class="resize-helper"><div id="timeline-resize-helper" class="timeline-grid"></div></div>
+      <div id="timeline-debug" class="just-a-number"></div>
+      <div id="timeline" class="timeline-grid"></div>
+    </div>
+    <div id="popup-text-container">
+      <div id="popup-text-alarm" class="text"><div class="holder"></div><span class="resize-helper alarm-text"><div id="instructions-0"></div><div id="instructions-1"></div></span></div>
+      <div id="popup-text-alert" class="text"><div class="holder"></div><span class="resize-helper alert-text"><div id="instructions-2"></div><div id="instructions-3"></div></span></div>
+      <div id="popup-text-info" class="text"><div class="holder"></div><span class="resize-helper info-text"><div id="instructions-4"></div><div id="instructions-5"></div></span></div>
+    </div>
+  </div>
+</body>
+</html>

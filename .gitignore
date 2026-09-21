@@ -1,0 +1,27 @@
+# QML / Quickshell runtime output
+*.qmlc
+*.jsc
+.qmlls.ini
+
+# TypeScript bridge
+bridge/node_modules/
+bridge/dist/
+bridge/coverage/
+.venv-piper/
+assets/voices/*.onnx
+assets/voices/*.onnx.json
+__pycache__/
+*.pyc
+*.ses
+
+# Local configuration and recordings
+.env
+config.local.json
+fixtures/private/
+*.log
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+.deps/

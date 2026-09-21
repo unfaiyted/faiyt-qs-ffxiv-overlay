@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+action="${1:-debug}"
+active_class="$(hyprctl -j activewindow | jq -r '.class // ""')"
+
+case "${active_class,,}" in
+    *ffxiv*|*final\ fantasy*) ;;
+    *) exit 0 ;;
+esac
+
+case "$action" in
+    debug|settings) ipc_target="overlay settings" ;;
+    diagnostics|diag) ipc_target="overlay diagnostics" ;;
+    layout|edit) ipc_target="layout toggle" ;;
+    *) printf 'Usage: %s {settings|diagnostics|layout}\n' "$0" >&2; exit 2 ;;
+esac
+
+if quickshell --path "$project_dir/shell.qml" ipc call $ipc_target; then
+    exit 0
+fi
+
+systemctl --user start faiyt-qs-ffxiv-overlay.service
+for _attempt in 1 2 3 4 5; do
+    sleep 0.2
+    if quickshell --path "$project_dir/shell.qml" ipc call $ipc_target; then
+        exit 0
+    fi
+done
+
+exit 1

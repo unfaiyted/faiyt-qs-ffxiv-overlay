@@ -1,0 +1,13 @@
+[Unit]
+Description=Faiyt FFXIV Quickshell Overlay
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env quickshell --path "@PROJECT_DIR@/shell.qml"
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=graphical-session.target
