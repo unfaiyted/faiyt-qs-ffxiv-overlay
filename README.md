@@ -186,7 +186,9 @@ Install and start the user service:
 ```
 
 The installer generates the unit with the current checkout path, reloads the
-user systemd manager, enables the service, and starts it immediately.
+user systemd manager, enables it under `default.target`, and starts it
+immediately. Using `default.target` makes startup reliable on Hyprland sessions
+that do not activate systemd's optional `graphical-session.target`.
 
 ```mermaid
 flowchart TD

@@ -1,7 +1,6 @@
 [Unit]
 Description=Faiyt FFXIV Quickshell Overlay
-After=graphical-session.target
-PartOf=graphical-session.target
+After=default.target
 
 [Service]
 Type=simple
@@ -10,4 +9,4 @@ Restart=always
 RestartSec=2
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=default.target

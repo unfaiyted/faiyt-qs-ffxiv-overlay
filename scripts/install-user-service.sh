@@ -11,6 +11,7 @@ escaped_project_dir="${project_dir//&/\\&}"
 sed "s|@PROJECT_DIR@|$escaped_project_dir|g" "$template" > "$unit_path"
 
 systemctl --user daemon-reload
-systemctl --user enable --now faiyt-qs-ffxiv-overlay.service
+systemctl --user reenable faiyt-qs-ffxiv-overlay.service
+systemctl --user restart faiyt-qs-ffxiv-overlay.service
 
 printf 'Installed and started %s\n' "$unit_path"
